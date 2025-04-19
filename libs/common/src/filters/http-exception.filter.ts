@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { MongooseError } from 'mongoose';
+import { MongoServerError } from 'mongodb';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -35,7 +35,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       status = HttpStatus.OK;
 
       responseMessage = errorMessageArrayToString(message || error);
-    } else if (exception.constructor === MongooseError) {
+    } else if (exception.constructor === MongoServerError) {
       status = HttpStatus.OK;
       statusCode = HttpStatus.BAD_REQUEST;
       responseMessage = 'Something went wrong';
