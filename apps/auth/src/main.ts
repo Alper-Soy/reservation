@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AuthModule } from './auth.module';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule, {
@@ -9,6 +10,7 @@ async function bootstrap() {
     bufferLogs: true,
     cors: true,
   });
+  const configService = app.get(ConfigService);
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -19,6 +21,6 @@ async function bootstrap() {
   );
   app.useLogger(app.get(Logger));
 
-  await app.listen(process.env.port ?? 3001);
+  await app.listen(configService.get('HTTP_PORT') ?? 3001);
 }
 bootstrap();
