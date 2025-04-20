@@ -7,6 +7,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -33,11 +35,13 @@ import * as Joi from 'joi';
   ],
   controllers: [AuthController],
   providers: [
-    AuthService,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
   ],
 })
 export class AuthModule {}
