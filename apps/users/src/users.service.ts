@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UsersRepository } from './users.repository';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
+import { CreateUserDto } from './dto/create-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
+import { UsersRepository } from './users.repository';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class UsersService {
@@ -34,12 +30,12 @@ export class UsersService {
   async verifyUser(email: string, password: string) {
     const user = await this.usersRepository.findOne({ email });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new RpcException('User not found');
     }
 
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
-      throw new UnauthorizedException('Credentials are not valid.');
+      throw new RpcException('Credentials are not valid.');
     }
     return user;
   }
@@ -47,7 +43,7 @@ export class UsersService {
   async getUser(getUserDto: GetUserDto) {
     const user = await this.usersRepository.findOne(getUserDto);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new RpcException('User not found');
     }
 
     return user;

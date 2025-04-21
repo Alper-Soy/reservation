@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { TokenPayload } from '../interfaces/token-payload.interface';
-import { UsersService } from '../users/users.service';
+import { User, USERS_SERVICE } from '@app/common';
+import { catchError, firstValueFrom, timeout } from 'rxjs';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly configService: ConfigService,
-    private readonly usersService: UsersService,
+    @Inject(USERS_SERVICE) private readonly usersClient: ClientProxy,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -22,7 +24,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({ sub: userId }: TokenPayload) {
-    return await this.usersService.getUser({ _id: userId });
+  async validate(payload: TokenPayload): Promise<User> {
+    return firstValueFrom(
+      this.usersClient.send<User>('get_auth_user', { _id: payload.sub }).pipe(
+        timeout(5000),
+        catchError((error) => {
+          throw new UnauthorizedException(error);
+        }),
+      ),
+    );
   }
 }

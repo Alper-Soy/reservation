@@ -23,6 +23,18 @@ services:
       - '3001:3001'
     volumes:
       - .:/usr/src/app
+  users:
+    build:
+      context: .
+      dockerfile: ./apps/users/Dockerfile
+      target: development
+    command: pnpm run start:dev users
+    env_file:
+      - ./apps/users/.env
+    ports:
+      - '3002:3002'
+    volumes:
+      - .:/usr/src/app
   mongo:
     image: mongo
     ports:
