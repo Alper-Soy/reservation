@@ -1,17 +1,18 @@
 import { Module } from '@nestjs/common';
-import { ReservationsService } from './reservations.service';
-import { ReservationsController } from './reservations.controller';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as Joi from 'joi';
 import {
   AUTH_SERVICE,
   DatabaseModule,
   HttpExceptionFilter,
   LoggerModule,
+  User,
+  UserSchema,
 } from '@app/common';
-import { ReservationsRepository } from './reservations.repository';
-import { Reservation, ReservationSchema } from './models/reservation.schema';
 import { APP_FILTER } from '@nestjs/core';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import * as Joi from 'joi';
+import { UsersRepository } from './users.repository';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
@@ -20,15 +21,14 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       isGlobal: true,
       validationSchema: Joi.object({
         MONGODB_URI: Joi.string().required(),
-        PORT: Joi.number().required(),
+        HTTP_PORT: Joi.number().required(),
+        TCP_PORT: Joi.number().required(),
         AUTH_HOST: Joi.string().required(),
         AUTH_PORT: Joi.number().required(),
       }),
     }),
     DatabaseModule,
-    DatabaseModule.forFeature([
-      { name: Reservation.name, schema: ReservationSchema },
-    ]),
+    DatabaseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     LoggerModule,
     ClientsModule.registerAsync([
       {
@@ -44,14 +44,15 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  controllers: [ReservationsController],
+  controllers: [UsersController],
   providers: [
-    ReservationsService,
-    ReservationsRepository,
+    UsersService,
+    UsersRepository,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
   ],
+  exports: [UsersService],
 })
-export class ReservationsModule {}
+export class UsersModule {}
