@@ -6,6 +6,7 @@ import {
   DatabaseModule,
   HttpExceptionFilter,
   LoggerModule,
+  PAYMENTS_SERVICE,
 } from '@app/common';
 import { ReservationsRepository } from './reservations.repository';
 import { Reservation, ReservationSchema } from './models/reservation.schema';
@@ -23,6 +24,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         PORT: Joi.number().required(),
         AUTH_HOST: Joi.string().required(),
         AUTH_PORT: Joi.number().required(),
+        PAYMENTS_HOST: Joi.string().required(),
+        PAYMENTS_PORT: Joi.number().required(),
       }),
     }),
     DatabaseModule,
@@ -38,6 +41,17 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           options: {
             host: configService.get('AUTH_HOST'),
             port: configService.get('AUTH_PORT'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
+        name: PAYMENTS_SERVICE,
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('PAYMENTS_HOST'),
+            port: configService.get('PAYMENTS_PORT'),
           },
         }),
         inject: [ConfigService],

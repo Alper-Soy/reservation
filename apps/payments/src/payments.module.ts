@@ -5,7 +5,6 @@ import { LoggerModule } from '@app/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { StripeModule } from 'nestjs-stripe';
-import Stripe from 'stripe';
 
 @Module({
   imports: [
@@ -22,9 +21,7 @@ import Stripe from 'stripe';
       useFactory: (configService: ConfigService) => {
         return {
           apiKey: configService.get('STRIPE_SECRET_KEY'),
-          apiVersion: configService.get(
-            'STRIPE_API_VERSION',
-          ) as Stripe.LatestApiVersion,
+          apiVersion: configService.get('STRIPE_API_VERSION'),
         };
       },
       inject: [ConfigService],
