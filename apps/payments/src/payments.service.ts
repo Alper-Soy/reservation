@@ -1,14 +1,20 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectStripe } from 'nestjs-stripe';
 import Stripe from 'stripe';
 import { PaymentsCreateChargeDto } from '../dto/payments-create-charge.dto';
-import { RpcException } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { NOTIFICATIONS_SERVICE } from '@app/common';
 
 @Injectable()
 export class PaymentsService {
   private logger: Logger = new Logger(PaymentsService.name);
 
   @InjectStripe() private readonly stripe: Stripe;
+
+  constructor(
+    @Inject(NOTIFICATIONS_SERVICE)
+    private readonly notificationsService: ClientProxy,
+  ) {}
 
   async createCharge({ amount, email }: PaymentsCreateChargeDto) {
     try {
@@ -19,6 +25,11 @@ export class PaymentsService {
         currency: 'usd',
         payment_method: 'pm_card_visa',
         return_url: 'http://localhost:3000',
+      });
+
+      this.notificationsService.emit('notify_email', {
+        email,
+        text: `Your payment of $${amount} has completed successfully.`,
       });
 
       this.logger.log('Payment finished');
