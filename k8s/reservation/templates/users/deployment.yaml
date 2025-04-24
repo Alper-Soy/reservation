@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: users
+  name: users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+      - image: us-east4-docker.pkg.dev/reservation-457712/users/production
+        name: users
+        env:
+          - name: MONGODB_URI
+            valueFrom:
+              secretKeyRef:
+                name: mongodb
+                key: connectionString
+          - name: TCP_PORT
+            value: '3006'
+          - name: HTTP_PORT
+            value: '3007'
+          - name: AUTH_HOST
+            value: auth
+          - name: AUTH_PORT
+            value: '3002'
+        ports:
+          - containerPort: 3006
+          - containerPort: 3007

@@ -6,6 +6,7 @@ import * as Joi from 'joi';
 import {
   AUTH_SERVICE,
   DatabaseModule,
+  HealthModule,
   HttpExceptionFilter,
   LoggerModule,
   User,
@@ -43,6 +44,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         inject: [ConfigService],
       },
     ]),
+    HealthModule,
   ],
   controllers: [UsersController],
   providers: [
