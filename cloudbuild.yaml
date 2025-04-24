@@ -1,15 +1,15 @@
-# ── Log configuration ─────────────────────────────────────────────
 logsBucket: gs://reservation-457712-cloudbuild-logs
-options:
-  serviceAccount: "159291790848-compute@developer.gserviceaccount.com"
-  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
-  logging: GCS_ONLY
+serviceAccount: cloudbuild-ci@reservation-457712.iam.gserviceaccount.com
 
-timeout: 900s   # uzun build’ler için
+timeout: 900s
 
 substitutions:
   _REGION: us-east4
   _PROJ: reservation-457712
+
+options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+  logging: GCS_ONLY
 
 # ── Build steps ───────────────────────────────────────────────────
 steps:
