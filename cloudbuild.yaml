@@ -1,9 +1,9 @@
 # ── Log configuration ─────────────────────────────────────────────
-logsBucket: gs://reservation-457712-cloudbuild-logs      # <- 1 kez yarat
+logsBucket: gs://reservation-457712-cloudbuild-logs
 options:
   serviceAccount: "159291790848-compute@developer.gserviceaccount.com"
-  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET  # bu bucket’ı kullan
-  logging: GCS_ONLY                                      # (veya CLOUD_LOGGING_ONLY)
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+  logging: GCS_ONLY
 
 timeout: 900s   # uzun build’ler için
 
