@@ -1,72 +1,39 @@
+# ── Log configuration ─────────────────────────────────────────────
+logsBucket: gs://reservation-457712-cloudbuild-logs      # <- 1 kez yarat
+options:
+  serviceAccount: "159291790848-compute@developer.gserviceaccount.com"
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET  # bu bucket’ı kullan
+  logging: GCS_ONLY                                      # (veya CLOUD_LOGGING_ONLY)
+
+timeout: 900s   # uzun build’ler için
+
+substitutions:
+  _REGION: us-east4
+  _PROJ: reservation-457712
+
+# ── Build steps ───────────────────────────────────────────────────
 steps:
-  # Reservations
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'build',
-        '-t',
-        'us-east4-docker.pkg.dev/reservation-457712/reservations/production',
-        '-f',
-        'apps/reservations/Dockerfile',
-        '.',
-      ]
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      ['push', 'us-east4-docker.pkg.dev/reservation-457712/reservations/production']
+  - name: gcr.io/cloud-builders/docker
+    args: ["build","-t","${_REGION}-docker.pkg.dev/${_PROJ}/reservations/production","-f","apps/reservations/Dockerfile","."]
+  - name: gcr.io/cloud-builders/docker
+    args: ["push","${_REGION}-docker.pkg.dev/${_PROJ}/reservations/production"]
 
-  # Auth
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'build',
-        '-t',
-        'us-east4-docker.pkg.dev/reservation-457712/auth/production',
-        '-f',
-        'apps/auth/Dockerfile',
-        '.',
-      ]
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-east4-docker.pkg.dev/reservation-457712/auth/production']
+  - name: gcr.io/cloud-builders/docker
+    args: ["build","-t","${_REGION}-docker.pkg.dev/${_PROJ}/auth/production","-f","apps/auth/Dockerfile","."]
+  - name: gcr.io/cloud-builders/docker
+    args: ["push","${_REGION}-docker.pkg.dev/${_PROJ}/auth/production"]
 
-  # Notifications
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'build',
-        '-t',
-        'us-east4-docker.pkg.dev/reservation-457712/notifications/production',
-        '-f',
-        'apps/notifications/Dockerfile',
-        '.',
-      ]
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      ['push', 'us-east4-docker.pkg.dev/reservation-457712/notifications/production']
+  - name: gcr.io/cloud-builders/docker
+    args: ["build","-t","${_REGION}-docker.pkg.dev/${_PROJ}/notifications/production","-f","apps/notifications/Dockerfile","."]
+  - name: gcr.io/cloud-builders/docker
+    args: ["push","${_REGION}-docker.pkg.dev/${_PROJ}/notifications/production"]
 
-  # Payments
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'build',
-        '-t',
-        'us-east4-docker.pkg.dev/reservation-457712/payments/production',
-        '-f',
-        'apps/payments/Dockerfile',
-        '.',
-      ]
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-east4-docker.pkg.dev/reservation-457712/payments/production']
+  - name: gcr.io/cloud-builders/docker
+    args: ["build","-t","${_REGION}-docker.pkg.dev/${_PROJ}/payments/production","-f","apps/payments/Dockerfile","."]
+  - name: gcr.io/cloud-builders/docker
+    args: ["push","${_REGION}-docker.pkg.dev/${_PROJ}/payments/production"]
 
-  # Users
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'build',
-        '-t',
-        'us-east4-docker.pkg.dev/reservation-457712/users/production',
-        '-f',
-        'apps/users/Dockerfile',
-        '.',
-      ]
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-east4-docker.pkg.dev/reservation-457712/users/production']
+  - name: gcr.io/cloud-builders/docker
+    args: ["build","-t","${_REGION}-docker.pkg.dev/${_PROJ}/users/production","-f","apps/users/Dockerfile","."]
+  - name: gcr.io/cloud-builders/docker
+    args: ["push","${_REGION}-docker.pkg.dev/${_PROJ}/users/production"]
